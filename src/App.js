@@ -1,38 +1,41 @@
 import React from 'react';
 
-// import Cards from './components/Cards/Cards';
-// import Chart from './components/Chart/Chart';
-// import CountryPicker './components/CountryPicker/CountryPicker';
+import { Cards, CountryPicker, Chart } from './components';
+import { fetchData } from './api/';
+import styles from './App.module.css';
 
-import {Cards, Chart, CountryPicker} from './components';
-import style from './App.module.css';
-import { fetchData } from './api';
+import image from './images/image.jpg';
 
 class App extends React.Component {
-    state = {
-        data: {},
-    }
+  state = {
+    data: {},
+    country: '',
+  }
 
-   async componentDidMount() {
-        const fechedata = await fetchData();
-       
-        this.setState({data: fechedata})
-    }
- 
+  async componentDidMount() {
+    const data = await fetchData();
 
-render() {
-    const {data} = this.state;
+    this.setState({ data });
+  }
+
+  handleCountryChange = async (country) => {
+    const data = await fetchData(country);
+
+    this.setState({ data, country: country });
+  }
+
+  render() {
+    const { data, country } = this.state;
+
     return (
-        <div className ={style.container}>
+      <div className={styles.container}>
+        <img className={styles.image} src={image} alt="COVID-19" />
         <Cards data={data} />
-        <CountryPicker />
-        <Chart />
-
-
-        </div>
-    )
+        <CountryPicker handleCountryChange={this.handleCountryChange} />
+        <Chart data={data} country={country} /> 
+      </div>
+    );
+  }
 }
 
-}
- export default App;
-
+export default App;
